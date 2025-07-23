@@ -1,0 +1,6 @@
+{
+  "description": "A responsive, mobile-first application built with React, based on a series of UI mockups. The app features multiple screens including a user profile, a skill trail, a map, guides, and an events calendar. It includes a functional bottom navigation bar and is styled to match the provided designs.",
+  "prompt": "These are the existing files in the app:",
+  "requestFramePermissions": [],
+  "name": "App"
+}
