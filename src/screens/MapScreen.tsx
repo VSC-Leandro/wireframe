@@ -50,9 +50,10 @@ const getReportIcon = (type: Report['type']) => {
 interface MapScreenProps {
     userName: string;
     userImage: string | null;
+    onNavigate: (page: string) => void;
 }
 
-export const MapScreen: React.FC<MapScreenProps> = ({ userName, userImage }) => {
+export const MapScreen: React.FC<MapScreenProps> = ({ userName, userImage, onNavigate }) => {
     const [position, setPosition] = useState<L.LatLng | null>(null);
     const [reports, setReports] = useState<Report[]>([]);
     const [isReportModalOpen, setReportModalOpen] = useState(false);
@@ -109,7 +110,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ userName, userImage }) => 
 
     return (
         <div className="screen map-screen">
-            <UserHeader rank={1} userName={userName} userImage={userImage} />
+            <UserHeader rank={1} userName={userName} userImage={userImage} onClick={() => onNavigate('profile')} />
             <div className="map-container">
                 {error && <div className="map-error-banner">{error}</div>}
                 <MapContainer center={position || defaultCenter} zoom={13} className="leaflet-container">

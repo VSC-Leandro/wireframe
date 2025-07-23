@@ -23,6 +23,7 @@ export const AppStyles = () => (
       --font-family: 'Lexend', sans-serif;
       --icon-color: #6A7A9E;
       --green-accent: #50D194;
+      --yellow-accent: #F5B945;
     }
     body {
       margin: 0;
@@ -54,6 +55,7 @@ export const AppStyles = () => (
       flex-direction: column;
       position: relative;
       box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      overflow: hidden;
     }
     .main-content {
       flex-grow: 1;
@@ -69,6 +71,7 @@ export const AppStyles = () => (
       align-items: center;
       width: 100%;
       box-sizing: border-box;
+      position: relative;
     }
     .screen-title {
         width: 100%;
@@ -201,13 +204,14 @@ export const AppStyles = () => (
         width: 100%;
         margin-bottom: 0.25rem;
         min-height: 44px;
+        flex-shrink: 0;
     }
     .profile-name { 
         font-size: 1.25rem; 
         font-weight: 600; 
         margin: 0; 
     }
-    .profile-header { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; margin-bottom: 0; }
+    .profile-header { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; margin-bottom: 0; flex-shrink: 0; }
     .profile-avatar-container { position: relative; }
     .profile-avatar { width: 120px; height: 120px; background-color: #A9B4C9; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -235,6 +239,7 @@ export const AppStyles = () => (
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-shrink: 0;
     }
     .profile-status {
         color: var(--text-secondary);
@@ -276,25 +281,53 @@ export const AppStyles = () => (
     }
     .save-status-btn svg { width: 18px; height: 18px; }
 
+    .profile-bottom-content {
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+
     .featured-badges { 
         display: grid; 
         grid-template-columns: repeat(3, 1fr); 
         gap: 1rem; 
         width: 100%; 
         align-items: start;
-        margin-top: auto;
     }
     .badge-card { 
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.25rem; /* Space between icon and info block */
         background-color: transparent; 
         padding: 0; 
         border-radius: 0;
         text-align: center; 
         font-size: 0.8rem; 
         font-weight: 500;
+        cursor: pointer;
+    }
+    .badge-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .badge-card.empty {
+        cursor: default;
+    }
+    .badge-card.empty .badge-illustration {
+        background-color: var(--card-bg);
+        opacity: 0.6;
+    }
+    .badge-card.empty .badge-illustration svg {
+        width: 40%;
+        height: 40%;
+        color: var(--text-secondary);
+    }
+    .badge-card.empty p {
+        color: var(--text-secondary);
     }
     .badge-illustration {
         width: 100%;
@@ -313,6 +346,14 @@ export const AppStyles = () => (
     .badge-card p {
         margin: 0;
         color: var(--text-primary);
+        font-weight: 600;
+        font-size: 0.85rem;
+        line-height: 1.3;
+        min-height: 34px; /* 2 lines, for layout consistency */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 2px; /* Small space so rating bg doesn't touch text */
     }
     .badge-rating {
         display: inline-flex;
@@ -323,6 +364,7 @@ export const AppStyles = () => (
         border-radius: 12px;
         min-height: 24px;
         box-sizing: border-box;
+        margin-top: -6px; /* Pulls the rating up, "sticking" it to the title */
     }
     .badge-rating.rating-dark {
         background-color: #2F3349;
@@ -345,9 +387,105 @@ export const AppStyles = () => (
     .profile-nav-card svg { color: var(--text-primary); width: 32px; height: 32px; }
     .notification-badge { position: absolute; top: 1rem; right: 1rem; background-color: var(--green-accent); color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; font-weight: 500;}
 
+    /* --- Profile Review Modal --- */
+    .profile-review-modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .profile-review-modal {
+        background-color: var(--bg-color);
+        border-radius: 16px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        width: 90%;
+        max-width: 380px;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        animation: slide-up 0.3s ease-out;
+    }
+    .profile-review-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--progress-bar-bg);
+        flex-shrink: 0;
+    }
+    .profile-review-modal-header h2 {
+        font-size: 1.1rem;
+        margin: 0;
+        flex-grow: 1;
+        padding-right: 1rem;
+    }
+    .profile-review-modal-header button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        color: var(--text-secondary);
+    }
+    .profile-review-modal-header button svg {
+        width: 28px;
+        height: 28px;
+    }
+    .profile-review-modal-content {
+        padding: 1.5rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .review-item {
+        border-bottom: 1px solid var(--progress-bar-bg);
+        padding-bottom: 1rem;
+    }
+    .review-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+    .review-user {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    .review-user svg {
+        width: 24px;
+        height: 24px;
+        color: var(--text-secondary);
+    }
+    .review-rating {
+        display: flex;
+        gap: 2px;
+    }
+    .review-rating svg {
+      width: 14px;
+      height: 14px;
+    }
+    .review-comment {
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: var(--text-secondary);
+    }
 
     /* --- User Header (shared) --- */
-    .user-header { background-color: var(--card-bg); border-radius: 16px; padding: 1rem; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1rem; width: 100%; }
+    .user-header { background-color: var(--card-bg); border-radius: 16px; padding: 1rem; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1rem; width: 100%; cursor: pointer; }
     .user-avatar-small { width: 48px; height: 48px; background-color: var(--progress-bar-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .user-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
     .user-avatar-small svg { width: 24px; height: 24px; color: var(--text-secondary); }
@@ -358,27 +496,539 @@ export const AppStyles = () => (
     .progress-bar-container { width: 80px; height: 6px; background-color: var(--progress-bar-bg); border-radius: 3px; overflow: hidden; }
     .progress-bar { height: 100%; background-color: var(--progress-bar-fill); border-radius: 3px; }
 
-    /* --- Trail Screen --- */
-    .trail-screen { gap: 2rem; }
-    .trail-map-container { position: relative; width: 300px; height: 450px; margin: 0 auto; }
-    .trail-node { position: absolute; width: 40px; height: 40px; background-color: var(--text-primary); border-radius: 50%; display:flex; align-items:center; justify-content:center; }
-    .node-core { width: 16px; height: 16px; background: var(--card-bg); border-radius: 50%; }
-    .trail-branch { position: absolute; background-color: var(--text-primary); z-index: -1; }
-    .node-1 { top: 10px; left: 60px; }
-    .node-2 { top: 140px; left: 60px; }
-    .node-3 { top: 80px; left: 180px; }
-    .node-4 { top: 180px; left: 230px; }
-    .node-5 { top: 250px; left: 130px; }
-    .branch-1 { top: 30px; left: 78px; width: 4px; height: 110px; }
-    .branch-2 { top: 98px; left: 80px; width: 104px; height: 4px; }
-    .branch-3 { top: 100px; left: 198px; width: 4px; height: 100px; }
-    .branch-4 { top: 198px; left: 150px; width: 84px; height: 4px; }
-    .branch-5 { top: 270px; left: 148px; width: 4px; height: 120px; }
-    .trail-reward { position: absolute; background: var(--card-bg); padding: 0.5rem 1rem; border-radius: 12px; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 500; }
-    .reward-1 { bottom: 90px; left: 0; }
-    .reward-2 { bottom: 90px; right: 0; }
-    .trail-add-node { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: white; border: 2px solid var(--text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-    .trail-add-node svg { color: var(--text-primary); width: 32px; height: 32px; }
+    /* --- New Trail Screen --- */
+    .trail-screen { 
+        padding: 1.5rem 0.5rem 0 0.5rem; 
+        gap: 1rem;
+        flex-grow: 1;
+        overflow: hidden;
+    }
+    .trail-screen .user-header {
+      margin: 0 0.7rem;
+      width: calc(100% - 1.4rem);
+    }
+    .trail-history-container {
+        flex-grow: 1;
+        width: 100%;
+        position: relative;
+        overflow-y: scroll;
+        padding-bottom: 80px;
+    }
+    .trail-canvas {
+        position: relative;
+        width: 100%;
+        min-height: 150vh;
+    }
+    .trail-connections {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+    .trail-connections path {
+        stroke: var(--accent-color);
+        stroke-width: 3;
+        fill: none;
+    }
+    .trail-node {
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .trail-node:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(96, 92, 141, 0.3);
+    }
+    .trail-node .node-icon-wrapper {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 4px solid var(--bg-color);
+        box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        overflow: hidden;
+    }
+    .trail-node svg { 
+        color: white; 
+        width: 24px;
+        height: 24px;
+    }
+    .node-type-creation .node-icon-wrapper,
+    .node-type-event .node-icon-wrapper { background-color: var(--text-primary); }
+    .node-type-glossary .node-icon-wrapper { background-color: #3498DB; }
+    .node-type-knowledge .node-icon-wrapper { background-color: var(--yellow-accent); }
+    .node-type-reward .node-icon-wrapper { background-color: var(--green-accent); }
+
+    /* Trail Dock */
+    .trail-dock {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        background: var(--bg-color);
+        border-top: 1px solid var(--progress-bar-bg);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 10;
+        padding: 0 1rem;
+        gap: 0.5rem;
+    }
+    .dock-button {
+        background: var(--card-bg);
+        border: none;
+        border-radius: 12px;
+        padding: 0.5rem 0.75rem;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .dock-button:hover { background-color: var(--card-bg-highlighted); }
+    .dock-button.add-manual { background-color: var(--text-primary); color: white; min-width: 48px; height: 48px; border-radius: 50%; justify-content: center; padding: 0; }
+    .dock-button.add-manual svg { width: 28px; height: 28px; }
+    .dock-button svg { width: 20px; height: 20px; }
+
+    /* --- Modals (Saberes & Recompensas) --- */
+    .trail-modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.4);
+        z-index: 200;
+        display: flex;
+        align-items: flex-end;
+    }
+    .trail-modal {
+        width: 100%;
+        height: 90%;
+        background-color: var(--app-bg);
+        border-radius: 24px 24px 0 0;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        transform: translateY(100%);
+        animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes slide-up {
+        to { transform: translateY(0); }
+    }
+    .trail-modal-header {
+        flex-shrink: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--progress-bar-bg);
+        background: white;
+        border-radius: 24px 24px 0 0;
+    }
+    .trail-modal-header h2 { font-size: 1.25rem; margin: 0; }
+    .trail-modal-header p { margin: 0; color: var(--text-secondary); font-weight: 500; }
+    .trail-modal-content {
+        flex-grow: 1;
+        overflow-y: hidden;
+        padding: 1rem 0 1.5rem;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+    }
+    
+    /* Saberes Modal - Drag & Drop */
+    .saberes-inventory { gap: 1rem; width: 100%; }
+    .saberes-inventory-header {
+      padding: 0 1.5rem 1rem;
+      border-bottom: 1px solid var(--progress-bar-bg);
+    }
+    .saberes-inventory-header h3 { margin: 0 0 0.5rem 0; font-size: 1rem; }
+    .saberes-inventory-header p { margin: 0; font-size: 0.9rem; color: var(--text-secondary); }
+    .equipped-saberes-slots {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin: 1rem auto 0;
+      width: 100%;
+      max-width: 280px;
+    }
+    .saber-slot {
+      aspect-ratio: 1 / 1;
+      border: 2px dashed var(--accent-color);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--card-bg);
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+    .saber-slot.drag-over {
+      background-color: var(--card-bg-highlighted);
+      border-color: var(--primary-action);
+      transform: scale(1.05);
+    }
+    .saber-slot > .plus-icon {
+        color: var(--accent-color);
+        width: 30%;
+        height: 30%;
+    }
+    /* Style for equipped saber item */
+    .equipped-saber-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem; /* Space between slot and title */
+    }
+
+    .equipped-saber-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        text-align: center;
+        margin: 0;
+        width: 100%;
+    }
+
+    .saber-slot .saber-item-equipped-icon {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: grab;
+    }
+
+    .saber-slot .saber-item-equipped-icon:active {
+        cursor: grabbing;
+    }
+    
+    .saber-slot .saber-item-icon {
+        width: 60%;
+        height: 60%;
+    }
+
+    
+    .saberes-list-container {
+        padding: 1rem 1.5rem 0;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        min-height: 0;
+    }
+    .saberes-list-container h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+    .saberes-list {
+        flex-grow: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .saber-item { 
+      display: flex; 
+      gap: 1rem; 
+      align-items: center; 
+      background: white; 
+      padding: 0.75rem 1rem; 
+      border-radius: 12px; 
+      cursor: grab;
+      transition: opacity 0.2s, box-shadow 0.2s, background-color 0.2s;
+      user-select: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      flex-shrink: 0;
+    }
+    .saber-item:active {
+        cursor: grabbing;
+    }
+    .saber-item.dragging {
+      opacity: 0.5;
+      background: var(--card-bg-highlighted);
+      box-shadow: 0 4px 12px rgba(96, 92, 141, 0.3);
+    }
+    .saber-item-icon { 
+      flex-shrink: 0;
+      width: 48px; 
+      height: 48px; 
+      border-radius: 50%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      background-color: var(--card-bg);
+    }
+    .saber-item-icon svg { color: var(--text-primary); width: 24px; height: 24px; }
+    .saber-item-info { flex-grow: 1; }
+    .saber-item-info h3 { margin: 0 0 0.1rem; font-size: 1rem; font-weight: 600; }
+    .saber-item-info p { margin: 0; font-size: 0.8rem; color: var(--text-secondary); }
+    .saber-equip-btn { display: none; }
+
+    /* --- Saber Detail View --- */
+    .saber-detail-view {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background-color: var(--bg-color);
+    }
+    .saber-detail-view .back-btn-detail {
+        padding-left: 1.5rem;
+    }
+    .saber-detail-content {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 0 1.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .saber-detail-main-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background-color: var(--card-bg);
+        padding: 1rem;
+        border-radius: 12px;
+    }
+    .saber-detail-main-info .saber-item-icon {
+      width: 64px;
+      height: 64px;
+    }
+    .saber-detail-main-info .saber-item-icon svg { width: 32px; height: 32px; }
+    .saber-detail-title {
+        font-size: 1.4rem;
+        line-height: 1.3;
+        font-weight: 700;
+        margin: 0;
+    }
+    .saber-detail-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    .saber-stat-card {
+        background: var(--card-bg);
+        padding: 1rem;
+        border-radius: 12px;
+        text-align: center;
+    }
+    .saber-stat-card dt {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+    }
+    .saber-stat-card dd {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-action);
+    }
+    .saber-detail-description, .saber-detail-history {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .saber-detail-description h3, .saber-detail-history h3 {
+        margin: 0;
+        font-size: 1.1rem;
+    }
+    .saber-detail-description p {
+        margin: 0;
+        line-height: 1.6;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        background: var(--card-bg);
+        padding: 1rem;
+        border-radius: 12px;
+    }
+    .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .history-item {
+        background-color: var(--card-bg);
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        font-size: 0.9rem;
+    }
+    .history-item p { margin: 0; }
+    .history-item .history-date {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--primary-action);
+    }
+
+
+    /* Recompensas Modal */
+    .recompensas-store { display: flex; flex-direction: column; gap: 2rem; }
+    .recompensa-category h3 { margin: 0 0 1rem 0; font-size: 1.1rem; }
+    .recompensa-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    .recompensa-item { display: grid; grid-template-columns: auto 1fr; gap: 1rem; background: white; padding: 1rem; border-radius: 12px; }
+    .recompensa-item.unlocked, .recompensa-item.locked { opacity: 0.7; }
+    .recompensa-item-icon { width: 64px; height: 64px; border-radius: 12px; background: var(--card-bg); display: flex; align-items: center; justify-content: center; }
+    .recompensa-item-icon svg { width: 32px; height: 32px; color: var(--primary-action); }
+    .recompensa-item-info h4 { margin: 0; font-size: 1rem; }
+    .recompensa-item-info .recompensa-req { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); background: var(--card-bg); padding: 2px 6px; border-radius: 6px; display: inline-block; margin: 0.25rem 0 0.5rem; }
+    .recompensa-item-info p { margin: 0; font-size: 0.85rem; color: var(--text-secondary); }
+    .recompensa-unlock-btn { grid-column: 1 / -1; margin-top: 0.5rem; width: 100%; padding: 0.75rem; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; background: var(--green-accent); color: white; }
+    .recompensa-unlock-btn:disabled { background: var(--accent-color); cursor: not-allowed; }
+    .recompensa-item.unlocked .recompensa-unlock-btn { background: var(--primary-action); }
+    
+    /* --- Tooltip --- */
+    .tooltip-container { position: relative; }
+    .tooltip-text { visibility: hidden; width: 180px; background-color: #333; color: #fff; text-align: center; border-radius: 6px; padding: 5px 10px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -90px; opacity: 0; transition: opacity 0.3s; font-size: 0.8rem; }
+    .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+
+    /* Detail Panel (Slide from Right) */
+    .trail-panel-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      z-index: 100;
+    }
+    .trail-detail-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 85%;
+      max-width: 360px;
+      height: 100%;
+      background-color: var(--card-bg-alt);
+      box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 110;
+      display: flex;
+      flex-direction: column;
+    }
+    .trail-detail-panel.open {
+      transform: translateX(0);
+    }
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background-color: var(--card-bg);
+        flex-shrink: 0;
+    }
+    .panel-header h2 {
+        font-size: 1.2rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .panel-header .node-icon-wrapper {
+        width: 36px;
+        height: 36px;
+        border: none;
+        box-shadow: none;
+    }
+    .panel-header .node-icon-wrapper svg {
+        width: 20px;
+        height: 20px;
+    }
+    .close-panel-btn, .close-modal-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem;
+    }
+    .close-panel-btn svg, .close-modal-btn svg { width: 28px; height: 28px; color: var(--text-secondary); }
+    .panel-content {
+        padding: 1.5rem;
+        overflow-y: auto;
+        flex-grow: 1;
+    }
+    .panel-content h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+    .panel-content .date {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+    }
+    .meta-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .meta-item dt {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+    }
+    .meta-item dd {
+        margin: 0;
+        font-size: 1rem;
+        color: var(--text-primary);
+        padding: 0.75rem;
+        background-color: var(--card-bg);
+        border-radius: 8px;
+    }
+    .panel-footer {
+        padding: 1rem 1.5rem;
+        margin-top: auto;
+        border-top: 1px solid var(--progress-bar-bg);
+        flex-shrink: 0;
+    }
+    .panel-action-btn {
+        width: 100%;
+        padding: 1rem;
+        border: none;
+        border-radius: 12px;
+        background-color: var(--primary-action);
+        color: var(--primary-action-text);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .panel-action-btn.equipped {
+        background-color: var(--green-accent);
+    }
+    .panel-action-btn:disabled {
+        background-color: var(--accent-color);
+        cursor: not-allowed;
+    }
+
 
     /* --- Map Screen --- */
     .map-screen {
@@ -898,15 +1548,6 @@ export const AppStyles = () => (
     .inventory-column.closed {
         padding: 1rem 0;
         align-items: center;
-    }
-    .details-column {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        height: 100%;
-        overflow-y: auto;
-        padding-right: 1.2rem;
-        min-height: 0;
     }
     .inventory-header {
         display: flex;

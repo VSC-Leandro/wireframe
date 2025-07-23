@@ -1,6 +1,8 @@
 {
   "description": "A aplicação foi refatorada para uma estrutura modular, com arquivos separados para telas, componentes e dados, melhorando a organização, manutenibilidade e escalabilidade do código. A aplicação mobile-first inclui telas de perfil, mapa, guias, eventos e login, construída com React.",
   "prompt": "",
-  "requestFramePermissions": ["geolocation"],
+  "requestFramePermissions": [
+    "geolocation"
+  ],
   "name": "App"
 }

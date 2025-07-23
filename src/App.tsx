@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { AppStyles } from './components/AppStyles';
 import { BottomNav } from './components/BottomNav';
 import { LoginScreen } from './screens/LoginScreen';
@@ -7,7 +7,8 @@ import { MapScreen } from './screens/MapScreen';
 import { GuidesScreen } from './screens/GuidesScreen';
 import { EventsScreen } from './screens/EventsScreen';
 import { TrailScreen } from './screens/TrailScreen';
-import { guidesData, eventsData, categoriesData } from './data';
+import { guidesData, eventsData, categoriesData, initialNodesData } from './data';
+import type { TrailNode } from './types';
 
 /**
  * Componente principal da aplicação.
@@ -24,6 +25,19 @@ const App = () => {
     const [userImage, setUserImage] = useState<string | null>(null);
     // Controla qual página está ativa no menu de navegação.
     const [activePage, setActivePage] = useState('profile');
+    // Armazena todos os nós da trilha, incluindo saberes.
+    const [nodes, setNodes] = useState<TrailNode[]>(initialNodesData);
+    
+    // Filtra e prepara os 3 saberes equipados para exibir no perfil.
+    const equippedSaberes = useMemo(() => {
+        const equipped = nodes.filter(n => n.type === 'knowledge' && n.meta.equipped);
+        const slots: (TrailNode | null)[] = Array(3).fill(null);
+        equipped.forEach((saber, index) => {
+            if (index < 3) slots[index] = saber;
+        });
+        return slots;
+    }, [nodes]);
+
 
     /**
      * Atualiza a página ativa. Chamado pelos botões de navegação.
@@ -38,7 +52,7 @@ const App = () => {
      * Passa as props necessárias para cada tela.
      */
     const renderPage = () => {
-        const pageProps = { userName, userImage };
+        const pageProps = { userName, userImage, onNavigate: handleNavClick };
         switch (activePage) {
             case 'map':
                 return <MapScreen {...pageProps} />;
@@ -47,13 +61,15 @@ const App = () => {
             case 'events':
                 return <EventsScreen events={eventsData} categories={categoriesData} {...pageProps} />;
             case 'trail':
-                return <TrailScreen {...pageProps} />;
+                return <TrailScreen {...pageProps} nodes={nodes} setNodes={setNodes} />;
             case 'profile':
             default:
                 return <ProfileScreen 
                             userName={userName}
                             userImage={userImage}
                             onUpdateImage={setUserImage}
+                            onNavigate={handleNavClick}
+                            equippedSaberes={equippedSaberes}
                        />;
         }
     };
@@ -78,7 +94,7 @@ const App = () => {
             <main className="main-content">
               {renderPage()}
             </main>
-            <BottomNav activePage={activePage} onNavClick={handleNavClick} />
+            {activePage !== 'trail' && <BottomNav activePage={activePage} onNavClick={handleNavClick} />}
         </div>
     );
 };

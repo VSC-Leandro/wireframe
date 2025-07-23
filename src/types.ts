@@ -48,3 +48,41 @@ export interface Report {
   position: [number, number];
   timestamp: string;
 }
+
+/**
+ * Define os tipos de nós possíveis na Trilha.
+ */
+export type NodeType = 'creation' | 'event' | 'glossary' | 'knowledge' | 'reward';
+
+/**
+ * Define a estrutura de metadados para cada tipo de nó.
+ */
+export type NodeMeta = {
+  notes?: string;
+  category?: string;
+  location?: string;
+  saberes_aplicados?: string[];
+  description?: string;
+  equipped?: boolean;
+  requirement?: string;
+  levelRequired?: number;
+  cost?: number;
+  benefit?: string;
+  unlocked?: boolean;
+  iconName?: string;
+  saberLevel?: number;
+};
+
+/**
+ * Define a estrutura de dados para um nó na Trilha & Histórias.
+ */
+export interface TrailNode {
+  id: string;
+  type: NodeType;
+  title: string;
+  date: string; // ISO 8601 format
+  xpEarned: number;
+  meta: NodeMeta;
+  parentId: string | null;
+  position: { top?: number, bottom: number, left: number }; // position in %
+}

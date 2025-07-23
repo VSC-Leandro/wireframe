@@ -20,6 +20,9 @@ export const WrenchIcon = ({ className = '', style = {} }) => <Icon className={c
 export const PauseIcon = ({ className = '', style = {} }) => <Icon className={className} style={style}><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></Icon>;
 export const PlusIcon = ({ className = '', style = {} }) => <Icon className={className} style={style}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></Icon>;
 export const SearchIcon = ({ className = '', style = {} }) => <Icon className={className} style={style}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></Icon>;
+export const DiamondIcon = ({ className = '', style = {} }) => <Icon className={className} style={style}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></Icon>;
+export const RewardIcon = ({ className = '', style = {} }) => <Icon className={className} style={style}><polyline points="20 12 20 22 4 22 4 12" /><rect x="2" y="7" width="20" height="5" /><line x1="12" y1="22" x2="12" y2="7" /><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C9.8 2 12 4.2 12 7z" /><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C14.2 2 12 4.2 12 7z" /></Icon>;
+
 
 // --- Event & Category Icons ---
 export const JusticeIcon = ({ className = '', style = {} }) => <Icon className={className} style={style}><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></Icon>;
